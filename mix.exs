@@ -27,6 +27,6 @@ defmodule Migrator.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:cqex, github: "matehat/cqex", optional: true}]
   end
 end
