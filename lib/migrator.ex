@@ -37,7 +37,7 @@ defmodule Migrator do
     {{:module, migrator_module, _,_}, []} = Code.eval_file migration_file
     case migrator_module.change do
       :error -> raise "Error running migration #{file_name}"
-      :ok -> :ok = @driver.add_applied_migration(date)
+      _other -> :ok = @driver.add_applied_migration(date)
     end
   end
 
