@@ -18,7 +18,10 @@ defmodule Migrator.Drivers.Cassandra do
       values:  %{migrated_at: :now, migration: date}
     }
 
-    CQEx.Query.call(client, query)
+    case CQEx.Query.call(client, query) do
+      {:ok, _} -> :ok
+      other -> other
+    end
   end
 
   def remove_applied_migration(migrated_at) do
@@ -27,7 +30,10 @@ defmodule Migrator.Drivers.Cassandra do
       values:  %{migrated_at: migrated_at}
     }
 
-    CQEx.Query.call(client, query)
+    case CQEx.Query.call(client, query) do
+      {:ok, _} -> :ok
+      other -> other
+    end
   end
 
   def last_migration_applied do
