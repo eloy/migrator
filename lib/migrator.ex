@@ -22,14 +22,15 @@ defmodule Migrator do
   end
 
   def rollback do
-    last_migration = @driver.last_migration_applied
-    if last_migration != nil do
-      migration_name = find_migration_file last_migration
-      Logger.info "Undoing migration #{migration_name}"
-      undo_migration last_migration, migration_name
-      Logger.info "Migration undone #{migration_name}"
+    case @driver.last_migration_applied do
+      nil -> :ok
+      last_migration ->
+        migration_name = find_migration_file last_migration[:migration]
+        Logger.info "Undoing migration #{migration_name}"
+        undo_migration last_migration, migration_name
+        Logger.info "Migration undone #{migration_name}"
+        :ok
     end
-    :ok
   end
 
   def run_migration(date, file_name) do

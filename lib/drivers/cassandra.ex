@@ -24,10 +24,10 @@ defmodule Migrator.Drivers.Cassandra do
     end
   end
 
-  def remove_applied_migration(migrated_at) do
+  def remove_applied_migration(migration) do
     query = %CQEx.Query{
       statement: "DELETE FROM migrations where migrated_at=?;",
-      values:  %{migrated_at: migrated_at}
+      values:  %{migrated_at: migration[:migrated_at]}
     }
 
     case CQEx.Query.call(client, query) do
@@ -37,10 +37,9 @@ defmodule Migrator.Drivers.Cassandra do
   end
 
   def last_migration_applied do
-    case CQEx.Query.call!(client, "select * from migrations limit 1;") |> Enum.at(0) do
+    case CQEx.Query.call!(client, "select * from migrations;") |> Enum.sort(&(&1[:migrated_at] >= &2[:migrated_at]))|>Enum.at(0) do
       nil -> nil
-      migration ->
-        IO.puts inspect(migration)
+      migration -> migration
     end
   end
 
